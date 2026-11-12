@@ -1,0 +1,19 @@
+Account: ACC9988 | Current Balance: INR 5000.00
+
+--- Test 1: Successful Withdrawal ---
+Successfully withdrew INR 1500.00
+Account: ACC9988 | Current Balance: INR 3500.00
+
+--- Test 2: Invalid Amount Exception (Negative Withdrawal) ---
+Error: Invalid amount (-200.000000). Amount must be positive.
+Balance verification after failed transaction:
+Account: ACC9988 | Current Balance: INR 3500.00
+
+--- Test 3: Insufficient Funds Exception ---
+Error: Insufficient funds! Current Balance: INR 3500.000000, Requested Withdrawal: INR 10000.000000
+Balance verification after failed transaction:
+Account: ACC9988 | Current Balance: INR 3500.00
+
+--- Test 4: Successful Deposit ---
+Successfully deposited INR 2500.00
+Account: ACC9988 | Current Balance: INR 6000.00
