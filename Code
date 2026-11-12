@@ -1,0 +1,111 @@
+#include <iostream>
+#include <string>
+#include <exception>
+#include <iomanip>
+
+using namespace std;
+
+// Custom Exception 1: InvalidAmount (derived from std::exception)
+class InvalidAmount : public exception {
+private:
+    string message;
+public:
+    InvalidAmount(double amt) {
+        message = "Error: Invalid amount (" + to_string(amt) + "). Amount must be positive.";
+    }
+    
+    const char* what() const noexcept override {
+        return message.c_str();
+    }
+};
+
+// Custom Exception 2: InsufficientFunds (derived from std::exception)
+class InsufficientFunds : public exception {
+private:
+    string message;
+public:
+    InsufficientFunds(double bal, double req) {
+        message = "Error: Insufficient funds! Current Balance: INR " + to_string(bal) + 
+                  ", Requested Withdrawal: INR " + to_string(req);
+    }
+    
+    const char* what() const noexcept override {
+        return message.c_str();
+    }
+};
+
+// BankAccount Class
+class BankAccount {
+private:
+    string accountNumber;
+    double balance;
+
+public:
+    BankAccount(string accNum, double initialBalance) : accountNumber(accNum), balance(initialBalance) {}
+
+    void deposit(double amount) {
+        if (amount <= 0.0) {
+            throw InvalidAmount(amount);
+        }
+        balance += amount;
+        cout << "Successfully deposited INR " << fixed << setprecision(2) << amount << "\n";
+    }
+
+    void withdraw(double amount) {
+        if (amount <= 0.0) {
+            throw InvalidAmount(amount);
+        }
+        if (amount > balance) {
+            throw InsufficientFunds(balance, amount);
+        }
+        balance -= amount;
+        cout << "Successfully withdrew INR " << fixed << setprecision(2) << amount << "\n";
+    }
+
+    void displayBalance() const {
+        cout << "Account: " << accountNumber << " | Current Balance: INR " << fixed << setprecision(2) << balance << "\n";
+    }
+};
+
+int main() {
+    BankAccount myAccount("ACC9988", 5000.00);
+    myAccount.displayBalance();
+
+    cout << "\n--- Test 1: Successful Withdrawal ---\n";
+    try {
+        myAccount.withdraw(1500.00);
+        myAccount.displayBalance();
+    } catch (const exception& e) {
+        cout << e.what() << "\n";
+    }
+
+    cout << "\n--- Test 2: Invalid Amount Exception (Negative Withdrawal) ---\n";
+    try {
+        myAccount.withdraw(-200.00);
+        myAccount.displayBalance();
+    } catch (const exception& e) {
+        cout << e.what() << "\n";
+        cout << "Balance verification after failed transaction:\n";
+        myAccount.displayBalance();
+    }
+
+    cout << "\n--- Test 3: Insufficient Funds Exception ---\n";
+    try {
+        myAccount.withdraw(10000.00);
+        myAccount.displayBalance();
+    } catch (const exception& e) {
+        cout << e.what() << "\n";
+        cout << "Balance verification after failed transaction:\n";
+        myAccount.displayBalance();
+    }
+
+    cout << "\n--- Test 4: Successful Deposit ---\n";
+    try {
+        myAccount.deposit(2500.00);
+        myAccount.displayBalance();
+    } catch (const exception& e) {
+        cout << e.what() << "\n";
+    }
+
+    return 0;
+}
